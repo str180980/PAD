@@ -5,7 +5,7 @@
   "main": "brokerAPI.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node chat-app"
+    "start": "node app"
   },
   "repository": {
     "type": "git",
