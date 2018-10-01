@@ -1,20 +1,19 @@
 # PAD
 This is Message Broker:
+
 It works on the Publisher Subscriber principle
-
-1stTask - Messages are serialised to json format and then to byte code 
-
-2nd Task - Even if Publisher is ofline or has ended his execution messages way before subscriber has connected, messages should be sent 
-to subscriber
-
-4th Team: 
-
-Daniel Golovatic
-
-Vasile Staver
-
-Cristian Capcelea
-
-Dorin Ciobanu
-
-Mihaela Grubii
+#### Task:
+ - Message serialization/deseriaization 
+ - Message Channels
+ - Message Translator
+ - Publish-Subscribe Channel 
+ - Message Routing
+ - Dead Letter Channel
+ - Event-Driven Consumer 
+ 
+#### 4th Team: 
+1. Daniel Golovatic
+2. Vasile Staver
+3. Cristian Capcelea
+4. Dorin Ciobanu
+5. Mihaela Grubii
