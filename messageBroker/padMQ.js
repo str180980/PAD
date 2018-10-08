@@ -1,3 +1,5 @@
+const fetch = require("node-fetch");
+
 class padBroker {
   constructor() {
     this.channels = new Map();
@@ -8,13 +10,16 @@ class padBroker {
     return this.channels.get(name);
   }
 
-  createChannel(name) {
-    console.log("Create CHANNELS HERE>>\n\n");
-
+  createChannel(name, options = {}) {
     let mQueue = [],
-      socketQueue = [];
+      socketQueue = [],
+      data = {};
+
+    if (options.enricher) {
+      data = { mQueue, socketQueue, enricher: options.enricher };
+    }
     const channel = this.channels.get(name);
-    if (!channel) this.channels.set(name, { mQueue, socketQueue });
+    if (!channel) this.channels.set(name, data);
   }
 
   fillDeadLetter(_channel, msg) {
@@ -31,7 +36,7 @@ class padBroker {
   }
   checkDeadLetter(channel) {
     const deadLetterC = this.deadLetterChannel.get(channel);
-    if(!deadLetterC) return false;
+    if (!deadLetterC) return false;
     const deadLetterQueue = deadLetterC && deadLetterC.mQueue;
     if (deadLetterC && deadLetterQueue.length > 0) return true;
     else false;
@@ -43,14 +48,25 @@ class padBroker {
     return;
   }
 
-  publish(channel, message) {
+  async publish(channel, message) {
+    let enricher = {};
+    let enrichedMsg = "DEFAULT MESSAGE!!!";
     let _channel = this.channels.get(channel);
-    // console.log("PUBLISH CHANNEL HERE>>\n\n");
+    if (_channel.enricher && _channel.enricher.url) {
+      enricher = _channel.enricher;
+      enricher.options.body = JSON.stringify({ message });
+      enricher.options.headers = {
+        "Content-Type": "application/json"
+      };
+      enrichedMsg = await fetch(enricher.url, enricher.options).then(res =>
+        res.text()
+      );
+    }
     if (!_channel) {
       this.createChannel(channel);
       _channel = this.channels.get(channel);
     }
-    _channel.mQueue.push(message);
+    _channel.mQueue.push(enrichedMsg);
     return;
   }
 }

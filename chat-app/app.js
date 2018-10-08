@@ -23,9 +23,17 @@ class ChatCLI {
   async init() {
     this.username = await questionPomise("Username: ");
     this.room = await questionPomise("Channel: ");
+    const options = {
+      enricher: {
+        url: "http://localhost:3000/timestamps",
+        options: {
+          method: "POST"
+        }
+      }
+    };
     rl.setPrompt(chalk.red("-->"));
     rl.prompt();
-    padMQ.openChannel(this.room, data => {
+    padMQ.openChannel(this.room, options, data => {
       console.log(chalk.green(`${data}`));
       rl.prompt(0);
     });

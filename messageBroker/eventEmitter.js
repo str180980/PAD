@@ -32,21 +32,21 @@ class MyEmitter extends EventEmitter {
     this.on("deadLetterPublish", this.deadLetterPublish);
   }
 
-  openChannel({ payload }, socket) {
-    this.mBroker.createChannel(payload.channel);
+  openChannel({ payload, options }, socket) {
+    this.mBroker.createChannel(payload.channel, options);
     this.mBroker.addSub(payload.channel, socket);
     if (this.mBroker.checkDeadLetter(payload.channel)) {
       this.emit("deadLetterPublish", payload.channel, socket);
     }
   }
 
-  publish({ payload, headers }, socket) {
-    this.mBroker.publish(headers.channel, payload);
+  async publish({ payload, headers }, socket) {
+    await this.mBroker.publish(headers.channel, payload);
     this.emit("notifySubs", headers.channel, socket);
   }
 
   deadLetterPublish(channel, socket) {
-      const deadLetterChannel = this.mBroker.deadLetterChannel.get(channel),
+    const deadLetterChannel = this.mBroker.deadLetterChannel.get(channel),
       mQueue = deadLetterChannel.mQueue;
     mQueue.forEach(msg => {
       socket.write(msg);
@@ -59,13 +59,10 @@ class MyEmitter extends EventEmitter {
       message = JSON.stringify({ channel, payload }),
       outBuff = this.msgManager.createBuffer(message);
 
+    console.log("NOTIFY MESSAGE!!!!>\n\n\n");
+    console.log(message);
+
     _ch.socketQueue.forEach(socket => {
-      console.log("NOTIFY>>>\n\n");
-      console.log(socket.destroyed);
-
-      console.log(socket.remotePort);
-      console.log(currentSocket.remotePort);
-
       if (currentSocket.remotePort === socket.remotePort) return;
 
       if (!socket.destroyed) socket.write(outBuff);

@@ -43,14 +43,15 @@ class brokerAPI extends EventEmitter {
     });
   }
 
-  openChannel(name, callback) {
+  openChannel(name, options, callback) {
     let _message = JSON.stringify({
       headers: {
         event: "openChannel"
       },
       payload: {
         channel: name
-      }
+      },
+      options
     });
 
     _message = Buffer.from(_message);
