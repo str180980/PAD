@@ -24,8 +24,14 @@ class ChatCLI {
     this.username = await questionPomise("Username: ");
     this.room = await questionPomise("Channel: ");
     const options = {
-      enricher: {
-        url: "http://localhost:3000/timestamps",
+      // enricher: {
+      //   url: "http://localhost:3000/timestamps",
+      //   options: {
+      //     method: "POST"
+      //   }
+      // },
+      wireTrap: {
+        url: "http://localhost:3030/logs",
         options: {
           method: "POST"
         }
